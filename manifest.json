@@ -3,7 +3,7 @@
 	"name": "Simle Password",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Put a simple lock on your vault without ever touching a file!",
+	"description": "Protect your vault behind a password",
 	"author": "Lucy Dryaeva",
 	"authorUrl": "https://lucydryaeva.com",
 	"isDesktopOnly": false

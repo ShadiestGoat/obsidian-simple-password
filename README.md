@@ -1,6 +1,6 @@
-# Simple Lock
+# Simple Password
 
-Lets you put a simple lock on your [Obsidian](https://obsidian.md) vault
+Protect your [Obsidian](https://obsidian.md) vault with a password
 
 ![Preview Banner](./github/preview-main.png)
 
