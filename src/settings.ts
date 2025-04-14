@@ -3,7 +3,8 @@ import { AbstractInputSuggest, Notice, PluginSettingTab, Setting } from 'obsidia
 import type SimplePassword from 'src'
 import { NewPasswordModal, RequirePasswordModal } from './modals'
 import SettingsPaths from './components/SettingsPaths.svelte'
-import { mount, unmount, writable, get } from 'svelte'
+import { mount, unmount } from 'svelte'
+import { writable, get } from 'svelte/store'
 
 export enum PrivacyMode {
     BLUR = 'blur',

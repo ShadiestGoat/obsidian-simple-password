@@ -94,7 +94,9 @@ export default ts.config(
 			'svelte/require-event-dispatcher-types': 'warn',
 			'svelte/require-optimized-style-attribute': 'warn',
 			'svelte/prefer-style-directive': 'warn',
-			'svelte/prefer-class-directive': 'warn'
+			'svelte/prefer-class-directive': 'warn',
+			// Breaks svelete >:(
+			'import-x/no-duplicates': 'off'
 		}
 	}
 )

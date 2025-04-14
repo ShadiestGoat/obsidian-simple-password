@@ -44,7 +44,7 @@
     }}
 >
     {#if requireOldPassword}
-        <PasswordInput {correctPassword} {hint} bind:this={passInp} bind:value={oldPassword} />
+        <PasswordInput {correctPassword} {hint} bind:this={passInp} bind:value={oldPassword} placeholder="Old Password" />
     {/if}
 
     <input type="password" placeholder="New Password" bind:value={newPassword} />

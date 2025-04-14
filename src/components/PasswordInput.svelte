@@ -5,9 +5,10 @@
         correctPassword: string
         hint: string
         value?: string
+		placeholder?: string
     }
 
-    let { correctPassword, hint, value = $bindable('') }: Props = $props()
+    let { correctPassword, hint, value = $bindable(''), placeholder = "Password" }: Props = $props()
 
     export function submit(shoulClear: boolean): boolean {
         const correct = value == correctPassword
@@ -27,7 +28,9 @@
 </script>
 
 <div class="sp-password-input">
-    <input type="password" placeholder="Password" bind:value />
+	<!-- svelte-ignore a11y_autofocus -->
+	<!-- This is only rendered in modals, at which point focus SHOULD jump to the new element -->
+    <input type="password" {placeholder} autofocus bind:value />
     {#if wrongCount > 0}
         <p class="sp-wrong">
             Wrong Password!

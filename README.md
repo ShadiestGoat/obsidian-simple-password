@@ -2,6 +2,8 @@
 
 Lets you put a simple lock on your [Obsidian](https://obsidian.md) vault
 
+![Preview Banner](./github/preview-main.png)
+
 ## Features
 
 - Lets you lock your vault so that no one snoops
@@ -27,6 +29,16 @@ When locked, if you try to open a file or get the preview for a file in a protec
 When the privacy mode is set to close tabs, it will not let tabs open for protected files (when locked). After a password is entered, the closed tabs will re-open.
 
 When the privacy mode is set to blur, it will only blur the background of the modal.
+
+### Preview
+
+#### Blur Mode
+
+![Blur Mode Preview](./github/preview-blur.gif)
+
+#### Tab Closer
+
+![Tab Closing Mode Preview](./github/preview-close.gif)
 
 ## Ackgnoledgements
 
