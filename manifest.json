@@ -1,7 +1,7 @@
 {
 	"id": "simple-password",
 	"name": "Simple Password",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
 	"description": "Protect your vault behind a password",
 	"author": "Lucy Dryaeva",
