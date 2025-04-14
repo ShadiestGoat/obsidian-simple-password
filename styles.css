@@ -1,8 +1,23 @@
-/*
+.sp-modal-blur {
+	backdrop-filter: blur(1rem);
+}
+.sp-container {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	width: 100%;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.sp-container input {
+	flex-grow: 1;
+}
 
-If your plugin does not need CSS, delete this file.
+.sp-wrong {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-error);
+	margin: 5px 0;
+}
 
-*/
+.sp-settings input[disabled] {
+	color: var(--text-muted)
+}
