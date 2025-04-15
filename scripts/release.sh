@@ -11,9 +11,10 @@ yq ".\"$new_version\" = \"$min_app\"" "$base"/../versions.json -ioj
 
 OUTPUT="$base/main.js" INPUT="$base/../src/index.ts" node "$base"/esbuild.config.mjs production
 
-git -C "$base/.." add "./package.json
-git -C "$base/.." add "./manifest.json
-git -C "$base/.." add "./versions.json
+git -C "$base/.." add './package.json'
+git -C "$base/.." add './manifest.json'
+git -C "$base/.." add './versions.json'
+git -C "$base/.." commit -m "Release $new_version"
 git -C "$base/.." push
 git -C "$base/.." tag "$new_version" origin
 git -C "$base/.." push --tags
