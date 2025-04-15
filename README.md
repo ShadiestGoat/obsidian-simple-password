@@ -12,7 +12,8 @@ Protect your [Obsidian](https://obsidian.md) vault with a password
 - Different 'privacy modes': simple blur & closing affected tabs
 - You can target specific paths (multiple paths supported)
 - Multiple ways to lock: command, hotkeys, ribbon & URL (`obsidian://lock`)
-- Protects against page preview core plugin, when locked
+- Protects against page preview core plugin
+- Protects against embeds
 - Plays well with theming - most things have unique classes
 
 > [!WARNING]

@@ -1,4 +1,5 @@
-import type { TFile, WorkspaceLeaf } from 'obsidian'
+import type { WorkspaceLeaf } from 'obsidian'
+import { type TFile } from 'obsidian'
 import { FileView, Notice, Plugin, setIcon } from 'obsidian'
 import type { Settings } from './settings'
 import { DEFAULT_SETTINGS, PrivacyMode, SettingsTab } from './settings'
@@ -18,9 +19,10 @@ type SafeLeaf = {
 export default class SimplePassword extends Plugin {
     settings: Settings
     ribbonIconEl: HTMLElement
-    isLocked: boolean
-    popoverObserver: MutationObserver
     autolockTimeoutID: ReturnType<typeof setTimeout>
+
+    isLocked: boolean
+    isLocking = false
 
     async onload() {
         await this.loadSettings()
@@ -69,7 +71,9 @@ export default class SimplePassword extends Plugin {
             })
         })
 
-        this.beginWatchingPopover()
+        this.register(() => this.removeAutolock())
+
+        this.watchDom()
 
         this.addSettingTab(new SettingsTab(this.app, this))
 
@@ -96,11 +100,6 @@ export default class SimplePassword extends Plugin {
         }
     }
 
-    onunload(): void {
-        this.popoverObserver.disconnect()
-        this.removeAutolock()
-    }
-
     isPathLocked(testPath: string): boolean {
         for (const _p of this.settings.protectedPaths) {
             const p = new URL(_p, 'file://').pathname
@@ -113,39 +112,136 @@ export default class SimplePassword extends Plugin {
         return false
     }
 
-    beginWatchingPopover() {
-        this.popoverObserver = new MutationObserver(() => {
-            if (!this.isLocked) {
+    /**
+     * Iter over node list nl, and lock if needed
+     * @returns true if should exit early
+     */
+    nodeListMaybeLock(
+        nl: NodeListOf<Element>,
+        popoverEl: Element,
+        getPath: (el: Element) => string | null | undefined
+    ): boolean {
+        console.log('Gotten something')
+
+        for (let i = 0; i < nl.length; i++) {
+            const path = getPath(nl.item(i))
+            if (!path) {
+                continue
+            }
+
+            console.log('path found', path)
+
+            if (this.isPathLocked(path)) {
+                popoverEl.remove()
+                this.lock(true)
+                return true
+            }
+        }
+
+        return false
+    }
+
+    watchDom() {
+        const domObs = new MutationObserver(() => {
+            if (!this.isLocked || this.isLocking) {
                 return
             }
+
+            // I decied to add a dom observer clause here, since a user could embed the thing on the fly
+            const embedDoc = document.querySelector('.internal-embed[src]')
+            if (embedDoc) {
+                console.log('Embed detected')
+                const path = embedDoc.attributes.getNamedItem('src')?.value
+                if (path) {
+                    const realPath = this.app.metadataCache.getFirstLinkpathDest(path, '')?.path
+                    if (realPath) {
+                        console.log('real path found', realPath)
+
+                        const curFile = this.app.workspace.getActiveFile()
+                        const curLeaf = this.app.workspace.getMostRecentLeaf()
+
+                        if (curLeaf && curFile) {
+                            this.lock(true, [{ leaf: curLeaf, file: curFile }])
+                            return
+                        }
+                    }
+                }
+            }
+
             const popover = document.querySelector('.popover.hover-popover')
             if (!popover) return
 
-            document.querySelectorAll('*:hover[data-path]').forEach((e) => {
-                const path = e.attributes.getNamedItem('data-path')
+            // File Explorer hovers
+            if (
+                this.nodeListMaybeLock(
+                    document.querySelectorAll('*:hover[data-path]'),
+                    popover,
+                    (e) => e.attributes.getNamedItem('data-path')?.value
+                )
+            ) {
+                return
+            }
 
-                if (path?.value && this.isPathLocked(path.value)) {
-                    popover.remove()
-                    this.lock(true)
-                }
-            })
+            // In-editor hovers
+
+            // Idea here is to select the next sibling after the start of a link, ie. the actual link data
+            // This is needed since the popover can be initiated by the alias part, in which case thats the thing that has hover
+            if (
+                this.nodeListMaybeLock(
+                    document.querySelectorAll('.cm-formatting-link-start:has(~ *:hover) + *'),
+                    popover,
+                    (el) => {
+                        console.log('sibling', el)
+
+                        return !el.textContent
+                            ? ''
+                            : this.app.metadataCache.getFirstLinkpathDest(el.textContent, '')?.path
+                    }
+                )
+            ) {
+                return
+            }
+
+            // Preview hovers
+            if (
+                this.nodeListMaybeLock(
+                    document.querySelectorAll('*:hover[href]'),
+                    popover,
+                    (el) => {
+                        console.log('preview', el)
+
+                        const href = el.attributes.getNamedItem('href')?.value
+                        if (!href) return null
+
+                        console.log('href', href)
+                        console.log('file', this.app.metadataCache.getFirstLinkpathDest(href, ''))
+
+                        return this.app.metadataCache.getFirstLinkpathDest(href, '')?.path
+                    }
+                )
+            ) {
+                return
+            }
         })
 
-        this.popoverObserver.observe(document.body, {
+        domObs.observe(document.body, {
             childList: true,
             subtree: true
         })
+
+        this.register(() => domObs.disconnect())
     }
 
     /**
      * Performs all the needed actions to initiate a lock
      */
-    async lock(alwaysRequestPassword = false) {
+    async lock(alwaysRequestPassword = false, extraLeaves: SafeLeaf[] = []) {
         this.isLocked = true
+        this.isLocking = true
         this.setRibbonIcon(true)
         this.removeAutolock()
 
-        const protectedLeaves: SafeLeaf[] = []
+        const protectedLeaves: SafeLeaf[] = [...extraLeaves]
 
         // We always need to know if theres active files, no matter the privacy mode
         this.app.workspace.iterateRootLeaves((l) => {
@@ -157,6 +253,7 @@ export default class SimplePassword extends Plugin {
         })
 
         if (!alwaysRequestPassword && protectedLeaves.length == 0) {
+            this.isLocking = false
             return
         }
 
@@ -174,6 +271,7 @@ export default class SimplePassword extends Plugin {
 
         new RequirePasswordModal(this.app, this.settings, (success) => {
             this.isLocked = !success
+            this.isLocking = false
 
             if (success) {
                 this.setRibbonIcon(false)
