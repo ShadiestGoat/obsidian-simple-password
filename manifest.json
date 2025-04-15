@@ -1,9 +1,10 @@
 {
-	"id": "simple-password",
-	"name": "Simple Password",
-	"minAppVersion": "0.15.0",
-	"description": "Protect your vault behind a password",
-	"author": "Lucy Dryaeva",
-	"authorUrl": "https://lucydryaeva.com",
-	"isDesktopOnly": false
+  "id": "simple-password",
+  "name": "Simple Password",
+  "minAppVersion": "0.15.0",
+  "description": "Protect your vault behind a password",
+  "author": "Lucy Dryaeva",
+  "authorUrl": "https://lucydryaeva.com",
+  "isDesktopOnly": false,
+  "version": "1.1.2"
 }
