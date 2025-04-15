@@ -121,15 +121,11 @@ export default class SimplePassword extends Plugin {
         popoverEl: Element,
         getPath: (el: Element) => string | null | undefined
     ): boolean {
-        console.log('Gotten something')
-
         for (let i = 0; i < nl.length; i++) {
             const path = getPath(nl.item(i))
             if (!path) {
                 continue
             }
-
-            console.log('path found', path)
 
             if (this.isPathLocked(path)) {
                 popoverEl.remove()
@@ -150,13 +146,10 @@ export default class SimplePassword extends Plugin {
             // I decied to add a dom observer clause here, since a user could embed the thing on the fly
             const embedDoc = document.querySelector('.internal-embed[src]')
             if (embedDoc) {
-                console.log('Embed detected')
                 const path = embedDoc.attributes.getNamedItem('src')?.value
                 if (path) {
                     const realPath = this.app.metadataCache.getFirstLinkpathDest(path, '')?.path
                     if (realPath) {
-                        console.log('real path found', realPath)
-
                         const curFile = this.app.workspace.getActiveFile()
                         const curLeaf = this.app.workspace.getMostRecentLeaf()
 
@@ -190,13 +183,10 @@ export default class SimplePassword extends Plugin {
                 this.nodeListMaybeLock(
                     document.querySelectorAll('.cm-formatting-link-start:has(~ *:hover) + *'),
                     popover,
-                    (el) => {
-                        console.log('sibling', el)
-
-                        return !el.textContent
+                    (el) =>
+                        !el.textContent
                             ? ''
                             : this.app.metadataCache.getFirstLinkpathDest(el.textContent, '')?.path
-                    }
                 )
             ) {
                 return
@@ -208,13 +198,8 @@ export default class SimplePassword extends Plugin {
                     document.querySelectorAll('*:hover[href]'),
                     popover,
                     (el) => {
-                        console.log('preview', el)
-
                         const href = el.attributes.getNamedItem('href')?.value
                         if (!href) return null
-
-                        console.log('href', href)
-                        console.log('file', this.app.metadataCache.getFirstLinkpathDest(href, ''))
 
                         return this.app.metadataCache.getFirstLinkpathDest(href, '')?.path
                     }
@@ -267,7 +252,7 @@ export default class SimplePassword extends Plugin {
     }
 
     requestUserToUnlock(protectedViews: SafeLeaf[] = []) {
-        console.log('Please password :3')
+        console.log('Password requested')
 
         new RequirePasswordModal(this.app, this.settings, (success) => {
             this.isLocked = !success
@@ -280,8 +265,6 @@ export default class SimplePassword extends Plugin {
 
                 if (this.settings.privacyMode == PrivacyMode.CLOSE) {
                     protectedViews.forEach((v) => {
-                        console.log('WOOOO', v.file)
-
                         this.app.workspace.getLeaf('tab').openFile(v.file as TFile)
                     })
                 }
@@ -310,8 +293,8 @@ export default class SimplePassword extends Plugin {
 
     async loadSettings() {
         this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
-        console.log('Loading...', this.settings)
     }
+
     async saveSettings() {
         await this.saveData(this.settings)
     }
