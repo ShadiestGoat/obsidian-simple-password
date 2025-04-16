@@ -33,14 +33,12 @@
 		"globals": "^16.0.0",
 		"obsidian": "latest",
 		"prettier": "^3.5.3",
+		"prettier-plugin-svelte": "^3.3.3",
 		"svelte": "^5.26.2",
 		"svelte-check": "^4.1.6",
 		"svelte-preprocess": "^6.0.3",
 		"tslib": "2.4.0",
 		"typescript": "5.8.3",
 		"typescript-eslint": "^8.29.1"
-	},
-	"peerDependencies": {
-		"moment": "^2"
 	}
 }

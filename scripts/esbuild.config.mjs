@@ -17,7 +17,6 @@ const context = await esbuild.context({
 	banner: {
 		js: banner,
 	},
-	entryPoints: [process.env.INPUT || "./src/index.ts"],
 	bundle: true,
 	external: [
 		"obsidian",
@@ -39,8 +38,8 @@ const context = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
-	outfile: process.env.OUTPUT || "main.js",
 	minify: prod,
+	// Fun changes from default
 	plugins: [
 		esbuildSvelte({
 			compilerOptions: {
@@ -49,7 +48,11 @@ const context = await esbuild.context({
 			},
 			preprocess: sveltePreprocess(),
 		}),
-	]
+	],
+	entryPoints: ["src/main.ts", "styles.css"],
+	outdir: process.env.OUTPUT || "dist/",
+	entryNames: "[name]",
+	absWorkingDir: process.env.PROJECT_DIR || process.cwd(),
 })
 
 if (prod) {

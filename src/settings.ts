@@ -1,6 +1,6 @@
 import type { App, ButtonComponent } from 'obsidian'
 import { AbstractInputSuggest, Notice, PluginSettingTab, Setting } from 'obsidian'
-import type SimplePassword from 'src'
+import type SimplePassword from 'src/main'
 import { NewPasswordModal, RequirePasswordModal } from './modals'
 import SettingsPaths from './components/SettingsPaths.svelte'
 import { mount, unmount } from 'svelte'
