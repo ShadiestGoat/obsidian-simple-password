@@ -259,7 +259,7 @@ export default class SimplePassword extends Plugin {
 
                 if (this.settings.privacyMode == PrivacyMode.CLOSE) {
                     protectedViews.forEach((v) => {
-                        this.app.workspace.getLeaf('tab').openFile(v.file as TFile)
+                        this.app.workspace.getLeaf('tab').openFile(v.file)
                     })
                 }
             } else {
