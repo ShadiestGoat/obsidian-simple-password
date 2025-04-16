@@ -135,8 +135,6 @@ export class SettingsTab extends PluginSettingTab {
                 .setDisabled(true)
         ]
 
-        this.lockableSettings[0].settingEl.style.borderTop = 'none'
-
         const paths = writable(this.plugin.settings.protectedPaths)
         paths.subscribe((v) => {
             this.plugin.settings.protectedPaths = v

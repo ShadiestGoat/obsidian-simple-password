@@ -37,13 +37,7 @@ export default class SimplePassword extends Plugin {
             name: 'Lock Vault',
             callback: () => {
                 this.lock()
-            },
-            hotkeys: [
-                {
-                    key: 'l',
-                    modifiers: ['Ctrl', 'Shift']
-                }
-            ]
+            }
         })
 
         this.registerObsidianProtocolHandler('lock', () => {

@@ -21,3 +21,7 @@
 .sp-settings input[disabled] {
 	color: var(--text-muted)
 }
+
+.sp-settings hr + * {
+	border-top: 'none'
+}
