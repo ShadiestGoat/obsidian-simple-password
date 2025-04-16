@@ -20,6 +20,7 @@ export default class SimplePassword extends Plugin {
     settings: Settings
     ribbonIconEl: HTMLElement
     autolockTimeoutID: ReturnType<typeof setTimeout>
+    lastHoveredFile: string
 
     isLocked: boolean
     isLocking = false
@@ -66,6 +67,17 @@ export default class SimplePassword extends Plugin {
         })
 
         this.register(() => this.removeAutolock())
+        this.registerEvent(
+			this.app.workspace.on(
+				// @ts-expect-error Undocumented api
+                'hover-link',
+                ({ linktext }: { linktext: string }) => {
+					// Name aside, linktext is always the correct link
+					// Though not always an abs path so
+					this.lastHoveredFile = linktext
+				}
+            )
+        )
 
         this.watchDom()
 
@@ -106,31 +118,6 @@ export default class SimplePassword extends Plugin {
         return false
     }
 
-    /**
-     * Iter over node list nl, and lock if needed
-     * @returns true if should exit early
-     */
-    nodeListMaybeLock(
-        nl: NodeListOf<Element>,
-        popoverEl: Element,
-        getPath: (el: Element) => string | null | undefined
-    ): boolean {
-        for (let i = 0; i < nl.length; i++) {
-            const path = getPath(nl.item(i))
-            if (!path) {
-                continue
-            }
-
-            if (this.isPathLocked(path)) {
-                popoverEl.remove()
-                this.lock(true)
-                return true
-            }
-        }
-
-        return false
-    }
-
     watchDom() {
         const domObs = new MutationObserver(() => {
             if (!this.isLocked || this.isLocking) {
@@ -158,48 +145,12 @@ export default class SimplePassword extends Plugin {
             const popover = document.querySelector('.popover.hover-popover')
             if (!popover) return
 
-            // File Explorer hovers
-            if (
-                this.nodeListMaybeLock(
-                    document.querySelectorAll('*:hover[data-path]'),
-                    popover,
-                    (e) => e.attributes.getNamedItem('data-path')?.value
-                )
-            ) {
-                return
-            }
+			console.log("hover", this.lastHoveredFile)
 
-            // In-editor hovers
-
-            // Idea here is to select the next sibling after the start of a link, ie. the actual link data
-            // This is needed since the popover can be initiated by the alias part, in which case thats the thing that has hover
-            if (
-                this.nodeListMaybeLock(
-                    document.querySelectorAll('.cm-formatting-link-start:has(~ *:hover) + *'),
-                    popover,
-                    (el) =>
-                        !el.textContent
-                            ? ''
-                            : this.app.metadataCache.getFirstLinkpathDest(el.textContent, '')?.path
-                )
-            ) {
-                return
-            }
-
-            // Preview hovers
-            if (
-                this.nodeListMaybeLock(
-                    document.querySelectorAll('*:hover[href]'),
-                    popover,
-                    (el) => {
-                        const href = el.attributes.getNamedItem('href')?.value
-                        if (!href) return null
-
-                        return this.app.metadataCache.getFirstLinkpathDest(href, '')?.path
-                    }
-                )
-            ) {
-                return
+			if (this.isPathLocked(this.lastHoveredFile)) {
+                popover.remove()
+                this.lock(true)
+                return true
             }
         })
 
