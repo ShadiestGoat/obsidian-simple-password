@@ -4,6 +4,7 @@ import { FileView, Notice, Plugin, setIcon } from 'obsidian'
 import type { Settings } from './settings'
 import { DEFAULT_SETTINGS, PrivacyMode, SettingsTab } from './settings'
 import { RequirePasswordModal } from './modals'
+import { modifySearchLeaf } from './search'
 
 const STR_RIBBON_LOCKED = 'Vault is locked'
 const STR_RIBBON_UNLOCKED = 'Vault is unlocked'
@@ -13,8 +14,15 @@ const ICON_RIBBON_UNLOCKED = 'unlock'
 // So we have a problem when closing tabs: the File is set to null
 type SafeLeaf = {
 	leaf: WorkspaceLeaf
-	file: TFile
-}
+} & (
+	| {
+			type: 'file'
+			file: TFile
+	  }
+	| {
+			type: 'graph'
+	  }
+)
 
 export default class SimplePassword extends Plugin {
 	settings: Settings
@@ -22,12 +30,11 @@ export default class SimplePassword extends Plugin {
 	autolockTimeoutID: ReturnType<typeof setTimeout>
 	lastHoveredFile: string
 
-	isLocked: boolean
+	isLocked = true
 	isLocking = false
 
 	async onload() {
 		await this.loadSettings()
-		this.isLocked = true
 
 		this.ribbonIconEl = this.addRibbonIcon(ICON_RIBBON_LOCKED, STR_RIBBON_LOCKED, () => {
 			this.onIconClick()
@@ -64,7 +71,17 @@ export default class SimplePassword extends Plugin {
 					})
 				)
 			})
+
+			this.modifyAllSearches()
+			this.checkForGraphs()
 		})
+
+		this.registerEvent(
+			this.app.workspace.on('layout-change', () => {
+				this.modifyAllSearches()
+				this.checkForGraphs()
+			})
+		)
 
 		this.register(() => this.removeAutolock())
 		this.registerEvent(
@@ -145,8 +162,6 @@ export default class SimplePassword extends Plugin {
 			const popover = document.querySelector('.popover.hover-popover')
 			if (!popover) return
 
-			console.log('hover', this.lastHoveredFile)
-
 			if (this.isPathLocked(this.lastHoveredFile)) {
 				popover.remove()
 				this.lock(true)
@@ -166,6 +181,8 @@ export default class SimplePassword extends Plugin {
 	 * Performs all the needed actions to initiate a lock
 	 */
 	async lock(alwaysRequestPassword = false, extraLeaves: SafeLeaf[] = []) {
+		if (this.isLocking) return
+
 		this.isLocked = true
 		this.isLocking = true
 		this.setRibbonIcon(true)
@@ -174,11 +191,15 @@ export default class SimplePassword extends Plugin {
 		const protectedLeaves: SafeLeaf[] = [...extraLeaves]
 
 		// We always need to know if theres active files, no matter the privacy mode
-		this.app.workspace.iterateRootLeaves((l) => {
-			if (l?.view instanceof FileView && l.view?.file) {
+		this.app.workspace.iterateAllLeaves((l) => {
+			if (!l || !l.view) return
+
+			if (l.view instanceof FileView && l.view.file) {
 				if (this.isPathLocked(l.view.file.path)) {
-					protectedLeaves.push({ leaf: l, file: l.view.file })
+					protectedLeaves.push({ leaf: l, type: 'file', file: l.view.file })
 				}
+			} else if (l.view.getViewType() == 'graph' && this.settings.blockGraph) {
+				protectedLeaves.push({ leaf: l, type: 'graph' })
 			}
 		})
 
@@ -197,8 +218,6 @@ export default class SimplePassword extends Plugin {
 	}
 
 	requestUserToUnlock(protectedViews: SafeLeaf[] = []) {
-		console.log('Password requested')
-
 		new RequirePasswordModal(this.app, this.settings, (success) => {
 			this.isLocked = !success
 			this.isLocking = false
@@ -210,7 +229,13 @@ export default class SimplePassword extends Plugin {
 
 				if (this.settings.privacyMode == PrivacyMode.CLOSE) {
 					protectedViews.forEach((v) => {
-						this.app.workspace.getLeaf('tab').openFile(v.file)
+						if (v.type == 'file') {
+							this.app.workspace.getLeaf('tab').openFile(v.file)
+						} else if (v.type == 'graph') {
+							this.app.workspace.getLeaf('tab').setViewState({
+								type: 'graph'
+							})
+						}
 					})
 				}
 			} else {
@@ -242,5 +267,23 @@ export default class SimplePassword extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings)
+	}
+
+	modifyAllSearches() {
+		this.app.workspace.getLeavesOfType('search').forEach((l) => {
+			if (!l) return
+			modifySearchLeaf.call(this, l.id)
+		})
+	}
+
+	checkForGraphs() {
+		console.log(this.app.workspace.getLeavesOfType('graph'))
+		if (
+			this.isLocked &&
+			this.settings.blockGraph &&
+			this.app.workspace.getLeavesOfType('graph').length > 0
+		) {
+			this.lock()
+		}
 	}
 }

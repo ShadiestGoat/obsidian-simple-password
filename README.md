@@ -14,6 +14,9 @@ Protect your [Obsidian](https://obsidian.md) vault with a password
 - Multiple ways to lock: command, hotkeys, ribbon & URL (`obsidian://lock`)
 - Protects against page preview core plugin
 - Protects against embeds
+- Protects against search
+- (Optionally) locks graph view
+- Allows cancelling, letting a person look through unprotected parts
 - Plays well with theming - most things have unique classes
 
 > [!WARNING]

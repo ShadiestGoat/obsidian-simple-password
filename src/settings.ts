@@ -18,6 +18,7 @@ export interface Settings {
 	protectedPaths: string[]
 	hint: string
 	password: string
+	blockGraph: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -25,7 +26,8 @@ export const DEFAULT_SETTINGS: Settings = {
 	privacyMode: PrivacyMode.BLUR,
 	protectedPaths: ['/'],
 	hint: '',
-	password: ''
+	password: '',
+	blockGraph: true
 }
 
 export class SettingsTab extends PluginSettingTab {
@@ -119,6 +121,20 @@ export class SettingsTab extends PluginSettingTab {
 							this.plugin.saveSettings()
 						})
 						.setValue(this.plugin.settings.privacyMode)
+				})
+				.setDisabled(true),
+			new Setting(containerEl)
+				.setName('Lock Graph View')
+				.setDesc(
+					'If true, will lock the graph view\nNOTE: This does NOT account for paths of any files'
+				)
+				.addToggle((toggle) => {
+					toggle
+						.onChange((v) => {
+							this.plugin.settings.blockGraph = v
+							this.plugin.saveSettings()
+						})
+						.setValue(this.plugin.settings.blockGraph)
 				})
 				.setDisabled(true),
 			new Setting(containerEl)
