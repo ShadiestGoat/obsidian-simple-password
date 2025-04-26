@@ -152,7 +152,7 @@ export default class SimplePassword extends Plugin {
 						const curLeaf = this.app.workspace.getMostRecentLeaf()
 
 						if (curLeaf && curFile) {
-							this.lock(true, [{ leaf: curLeaf, file: curFile }])
+							this.lock(true, [{ leaf: curLeaf, type: 'file', file: curFile }])
 							return
 						}
 					}
