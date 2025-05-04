@@ -42,7 +42,7 @@ export default class SimplePassword extends Plugin {
 
 		this.addCommand({
 			id: 'sp-lock-vault',
-			name: 'Lock Vault',
+			name: 'Lock vault',
 			callback: () => {
 				this.lock()
 			}

@@ -37,7 +37,7 @@
 			<button
 				disabled={$disabled}
 				class="mod-err"
-				aria-label="Remove Path"
+				aria-label="Remove path"
 				{...evWrapper(() => {
 					$paths.splice(i, 1)
 
@@ -52,7 +52,7 @@
 	<button
 		disabled={$disabled}
 		class="mod-cta"
-		aria-label="Add New Path"
+		aria-label="Add new path"
 		{...evWrapper(() => ($paths = [...$paths, '/']))}
 	>
 		+

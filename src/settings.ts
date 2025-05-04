@@ -68,7 +68,7 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.addClass('sp-settings')
 
 		new Setting(containerEl)
-			.setName(this.plugin.settings.password ? 'Change Password' : 'Set Password')
+			.setName(this.plugin.settings.password ? 'Change password' : 'Set password')
 			.addButton((btn) => {
 				btn.setCta()
 					.setButtonText('Change')
@@ -90,7 +90,7 @@ export class SettingsTab extends PluginSettingTab {
 
 		this.lockableSettings = [
 			new Setting(containerEl)
-				.setName('Auto Lock Minutes')
+				.setName('Auto lock minutes')
 				.setDesc('After x minutes of inactivity, lock the vault. Set to 0 for no auto lock')
 				.addText((text) => {
 					text.setPlaceholder('# of Minutes').setValue(
@@ -108,7 +108,7 @@ export class SettingsTab extends PluginSettingTab {
 				})
 				.setDisabled(true),
 			new Setting(containerEl)
-				.setName('Privacy Mode')
+				.setName('Privacy mode')
 				.setDesc('What should we do on lock?')
 				.addDropdown((drop) => {
 					drop.addOptions({
@@ -124,7 +124,7 @@ export class SettingsTab extends PluginSettingTab {
 				})
 				.setDisabled(true),
 			new Setting(containerEl)
-				.setName('Lock Graph View')
+				.setName('Lock graph view')
 				.setDesc(
 					'If true, will lock the graph view\nNOTE: This does NOT account for paths of any files'
 				)
@@ -182,14 +182,14 @@ export class SettingsTab extends PluginSettingTab {
 	onPasswordChangeButton() {
 		new NewPasswordModal(this.app, this.plugin.settings, (p) => {
 			if (p) {
-				new Notice('Changed Password')
+				new Notice('Password changed')
 				this.plugin.settings.password = p
 				this.plugin.saveSettings()
 
 				this.lockSet.setDisabled(false)
 				this.locked.set(true)
 			} else {
-				new Notice('Password Change Cancelled')
+				new Notice('Password change cancelled')
 			}
 		}).open()
 	}

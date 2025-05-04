@@ -53,8 +53,8 @@
 		/>
 	{/if}
 
-	<input type="password" placeholder="New Password" bind:value={newPassword} />
-	<input type="password" placeholder="Confirm Password" bind:value={conPassword} />
+	<input type="password" placeholder="New password" bind:value={newPassword} />
+	<input type="password" placeholder="Confirm password" bind:value={conPassword} />
 	{#if displayMismatch}
 		{#if newPassword.length < 3}
 			<p class="sp-wrong">Password needs to be longer than 3 chracters</p>
@@ -69,7 +69,7 @@
 			!conPassword ||
 			!(requireOldPassword && oldPassword) ||
 			displayMismatch}
-		aria-label="Submit Button"
+		aria-label="Submit"
 		class="mod-cta"
 	>
 		Submit

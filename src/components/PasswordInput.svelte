@@ -33,7 +33,7 @@
 	<input type="password" {placeholder} autofocus bind:value />
 	{#if wrongCount > 0}
 		<p class="sp-wrong">
-			Wrong Password!
+			Wrong password!
 			{#if wrongCount > 2 && hint}
 				Hint: <span class="sp-hint">{hint}</span>
 			{/if}

@@ -21,7 +21,7 @@ export class RequirePasswordModal extends Modal {
 	}
 
 	onOpen(): void {
-		this.setTitle('Password Required!')
+		this.setTitle('Password required!')
 		this.shouldRestoreSelection = true
 		this.containerEl.addClass('sp-modal-container')
 		this.containerEl.toggleClass('sp-modal-blur', this.settings.privacyMode == PrivacyMode.BLUR)
@@ -69,7 +69,7 @@ export class NewPasswordModal extends Modal {
 	}
 
 	onOpen(): void {
-		this.setTitle('Password Required!')
+		this.setTitle('Password required!')
 		this.shouldRestoreSelection = true
 		this.containerEl.addClass('sp-modal-container')
 		this.containerEl.toggleClass('sp-modal-blur', this.settings.privacyMode == PrivacyMode.BLUR)
