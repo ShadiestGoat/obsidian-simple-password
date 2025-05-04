@@ -277,7 +277,6 @@ export default class SimplePassword extends Plugin {
 	}
 
 	checkForGraphs() {
-		console.log(this.app.workspace.getLeavesOfType('graph'))
 		if (
 			this.isLocked &&
 			this.settings.blockGraph &&
