@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-simple-password",
-	"version": "1.3.2",
+	"version": "1.3.3",
 	"description": "Protect your vault behind a password",
 	"main": "main.js",
 	"type": "module",
