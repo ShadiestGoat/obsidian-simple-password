@@ -28,7 +28,7 @@
 
 <hr />
 
-<h3>Protected Paths</h3>
+<h3>Protected paths</h3>
 
 <div class="sp-paths">
 	{#each $paths as _, i (i)}

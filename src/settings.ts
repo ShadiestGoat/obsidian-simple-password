@@ -112,8 +112,8 @@ export class SettingsTab extends PluginSettingTab {
 				.setDesc('What should we do on lock?')
 				.addDropdown((drop) => {
 					drop.addOptions({
-						[PrivacyMode.BLUR]: 'Blur Background',
-						[PrivacyMode.CLOSE]: 'Close Affected Tabs',
+						[PrivacyMode.BLUR]: 'Blur background',
+						[PrivacyMode.CLOSE]: 'Close affected tabs',
 						[PrivacyMode.NONE]: 'Nothing'
 					})
 						.onChange((v) => {

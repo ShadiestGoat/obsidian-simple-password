@@ -30,7 +30,7 @@
 >
 	<PasswordInput bind:this={passInput} bind:value {correctPassword} {hint} />
 
-	<button type="submit" disabled={value == ''} aria-label="Submit Button" class="mod-cta">
+	<button type="submit" disabled={value == ''} aria-label="Submit button" class="mod-cta">
 		Ok
 	</button>
 </form>

@@ -49,7 +49,7 @@
 			{hint}
 			bind:this={passInp}
 			bind:value={oldPassword}
-			placeholder="Old Password"
+			placeholder="Old password"
 		/>
 	{/if}
 
