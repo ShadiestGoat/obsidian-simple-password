@@ -285,4 +285,9 @@ export default class SimplePassword extends Plugin {
 			this.lock()
 		}
 	}
+
+	async onExternalSettingsChange() {
+		await this.loadSettings()
+		await this.lock()
+	}
 }
