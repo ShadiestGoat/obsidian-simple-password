@@ -71,7 +71,9 @@ export class SettingsTab extends PluginSettingTab {
 			.setName(this.plugin.settings.password ? 'Change password' : 'Set password')
 			.addButton((btn) => {
 				btn.setCta()
-					.setButtonText('Change')
+					.setButtonText(
+						this.plugin.settings.password ? 'Change' : 'Set'
+					)
 					.onClick(() => this.onPasswordChangeButton())
 			})
 

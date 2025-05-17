@@ -181,7 +181,7 @@ export default class SimplePassword extends Plugin {
 	 * Performs all the needed actions to initiate a lock
 	 */
 	async lock(alwaysRequestPassword = false, extraLeaves: SafeLeaf[] = []) {
-		if (this.isLocking) return
+		if (this.isLocking || !this.settings.password) return
 
 		this.isLocked = true
 		this.isLocking = true
