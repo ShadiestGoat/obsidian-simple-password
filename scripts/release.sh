@@ -2,6 +2,8 @@ set -euo pipefail
 
 base="$(dirname $0)"
 
+gh auth status
+
 new_version=$(yq '.version' "$base"/../package.json -oy)
 yq ".version=\"$new_version\"" "$base"/../manifest.json -ioj
 

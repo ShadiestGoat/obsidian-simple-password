@@ -16,7 +16,7 @@ export type SearchView = View & {
 	startSearch: () => void
 }
 
-export function modifySearchLeaf(this: SimplePassword, leafId: string) {
+export async function modifySearchLeaf(this: SimplePassword, leafId: string) {
 	const l = this.app.workspace.getLeafById(leafId) as WorkspaceLeaf & { view: SearchView }
 	if (!l) return
 
@@ -44,7 +44,13 @@ export function modifySearchLeaf(this: SimplePassword, leafId: string) {
 		}
 	})
 
-	l.view.startSearch()
+	await l.loadIfDeferred()
+
+	try {
+		l.view.startSearch()
+	} catch {
+		console.warn("Simple Password: Can't re-do search, first result may be compramised")
+	}
 
 	this.register(() => {
 		const l = this.app.workspace.getLeafById(leafId) as WorkspaceLeaf & { view: SearchView }
