@@ -36,6 +36,10 @@ export class SettingsTab extends PluginSettingTab {
 	lockSet: Setting
 	lockableSettings: Setting[]
 	svelteComp: SettingsPaths
+	passwordSetting: {
+		setting?: Setting
+		btn?: ButtonComponent
+	} = {}
 
 	locked = writable(true)
 
@@ -67,15 +71,15 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.empty()
 		containerEl.addClass('sp-settings')
 
-		new Setting(containerEl)
-			.setName(this.plugin.settings.password ? 'Change password' : 'Set password')
-			.addButton((btn) => {
-				btn.setCta()
-					.setButtonText(
-						this.plugin.settings.password ? 'Change' : 'Set'
-					)
-					.onClick(() => this.onPasswordChangeButton())
+		this.passwordSetting.setting = new Setting(containerEl).addButton((btn) => {
+			this.passwordSetting.btn = btn
+
+			btn.setCta().onClick(() => {
+				this.onPasswordChangeButton()
 			})
+		})
+
+		this.updateDisplayInPasswordBtn()
 
 		this.lockSet = new Setting(containerEl)
 			.setName('Unlock settings below')
@@ -169,6 +173,13 @@ export class SettingsTab extends PluginSettingTab {
 		})
 	}
 
+	updateDisplayInPasswordBtn() {
+		this.passwordSetting.setting!.setName(
+			this.plugin.settings.password ? 'Change password' : 'Set password'
+		)
+		this.passwordSetting.btn!.setButtonText(this.plugin.settings.password ? 'Change' : 'Set')
+	}
+
 	onLockBtn() {
 		if (get(this.locked)) {
 			new RequirePasswordModal(this.app, this.plugin.settings, (success) => {
@@ -193,6 +204,8 @@ export class SettingsTab extends PluginSettingTab {
 			} else {
 				new Notice('Password change cancelled')
 			}
+
+			this.updateDisplayInPasswordBtn()
 		}).open()
 	}
 

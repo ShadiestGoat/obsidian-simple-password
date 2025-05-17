@@ -30,7 +30,7 @@
 
 		let happy = true
 
-		if (!passInp?.submit(false)) {
+		if (passInp && !passInp.submit(false)) {
 			happy = false
 		}
 
@@ -67,7 +67,7 @@
 		type="submit"
 		disabled={!newPassword ||
 			!conPassword ||
-			!(requireOldPassword && oldPassword) ||
+			requireOldPassword != !!oldPassword ||
 			displayMismatch}
 		aria-label="Submit"
 		class="mod-cta"
