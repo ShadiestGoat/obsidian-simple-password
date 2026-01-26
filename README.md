@@ -44,7 +44,7 @@ When the privacy mode is set to blur, it will only blur the background of the mo
 
 ![Tab Closing Mode Preview](./github/preview-close.gif)
 
-## Ackgnoledgements
+## Acknowledgements
 
 **HEAVILY** inspired by [Qing Li's Password Protection plugin](https://github.com/qing3962/password-protection) - I just wanted to add a few things to their plugin & the codebase didn't allow for my ideas to be easily implemented.
 Used the [sample plugin template](https://github.com/obsidianmd/obsidian-sample-plugin)
