@@ -125,7 +125,7 @@ export default class SimplePassword extends Plugin {
 
 	isPathLocked(testPath: string): boolean {
 		for (const _p of this.settings.protectedPaths) {
-			const p = new URL(_p, 'file://').pathname
+			const p = decodeURIComponent(new URL(_p, 'file://').pathname)
 
 			if (('/' + testPath).startsWith(p)) {
 				return true
