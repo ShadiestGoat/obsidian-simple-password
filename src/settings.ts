@@ -12,19 +12,35 @@ export enum PrivacyMode {
 	NONE = ''
 }
 
+export enum ProtectedPathType {
+	PREFIX = 'prefix',
+	EXACT = 'exact',
+	GLOB = 'glob',
+}
+
+export interface ProtectedPath {
+	type: ProtectedPathType
+	content: string
+}
+
 export interface Settings {
 	autoLockMinutes: number
 	privacyMode: PrivacyMode
-	protectedPaths: string[]
 	hint: string
 	password: string
 	blockGraph: boolean
+	protectedPaths: ProtectedPath[]
 }
 
 export const DEFAULT_SETTINGS: Settings = {
 	autoLockMinutes: 15,
 	privacyMode: PrivacyMode.BLUR,
-	protectedPaths: ['/'],
+	protectedPaths: [
+		{
+			type: ProtectedPathType.PREFIX,
+			content: '/'
+		}
+	],
 	hint: '',
 	password: '',
 	blockGraph: true
@@ -212,24 +228,5 @@ export class SettingsTab extends PluginSettingTab {
 	hide(): void {
 		unmount(this.svelteComp)
 		super.hide()
-	}
-}
-
-export class PathSuggestions extends AbstractInputSuggest<string> {
-	protected getSuggestions(query: string): string[] {
-		const p = new URL(query, 'file://').pathname
-
-		return this.app.vault
-			.getAllFolders(true)
-			.filter((v) => {
-				if (('/' + v.path).startsWith(p)) {
-					return true
-				}
-			})
-			.map((v) => v.path)
-	}
-
-	renderSuggestion(value: string, el: HTMLElement): void {
-		el.setText(value)
 	}
 }

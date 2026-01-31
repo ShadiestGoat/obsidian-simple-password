@@ -2,9 +2,10 @@ import type { WorkspaceLeaf } from 'obsidian'
 import { type TFile } from 'obsidian'
 import { FileView, Notice, Plugin, setIcon } from 'obsidian'
 import type { Settings } from './settings'
-import { DEFAULT_SETTINGS, PrivacyMode, SettingsTab } from './settings'
+import { DEFAULT_SETTINGS, PrivacyMode, ProtectedPathType, SettingsTab } from './settings'
 import { RequirePasswordModal } from './modals'
 import { modifySearchLeaf } from './search'
+import { normalizePath, pathComparer } from './utils'
 
 const STR_RIBBON_LOCKED = 'Vault is locked'
 const STR_RIBBON_UNLOCKED = 'Vault is unlocked'
@@ -124,10 +125,9 @@ export default class SimplePassword extends Plugin {
 	}
 
 	isPathLocked(testPath: string): boolean {
-		for (const _p of this.settings.protectedPaths) {
-			const p = decodeURIComponent(new URL(_p, 'file://').pathname)
-
-			if (('/' + testPath).startsWith(p)) {
+		testPath = normalizePath(testPath)
+		for (const pp of this.settings.protectedPaths) {
+			if (pathComparer[pp.type](pp.content, testPath)) {
 				return true
 			}
 		}
@@ -263,6 +263,27 @@ export default class SimplePassword extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData())
+		await this.migrateSettings()
+	}
+
+	async migrateSettings() {
+		let changed = false
+		if (this.settings.protectedPaths.length != 0) {
+			this.settings.protectedPaths = this.settings.protectedPaths.map(v => {
+				if (typeof v == "string") {
+					changed = true
+					return {
+						type: ProtectedPathType.PREFIX,
+						content: v
+					}
+				}
+				return v
+			})
+		}
+
+		if (changed) {
+			await this.saveSettings()
+		}
 	}
 
 	async saveSettings() {
