@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte'
 
 	interface Props {
-        app: App
+		app: App
 		type: ProtectedPathType
 		content: string
 		disabled: boolean
@@ -30,9 +30,9 @@
 			}
 
 			return paths.filter((v) => {
-                const sug = '/' + v
-                if (sug.startsWith(p)) return true
-                if (p.endsWith('/')) return sug == p.slice(0, -1)
+				const sug = '/' + v
+				if (sug.startsWith(p)) return true
+				if (p.endsWith('/')) return sug == p.slice(0, -1)
 				return false
 			})
 		}
@@ -43,45 +43,37 @@
 	}
 
 	let inputEl: HTMLInputElement
-    let activeElement = $state<HTMLElement>()
+	let activeElement = $state<HTMLElement>()
 
-    onMount(() => {
-        if (type == ProtectedPathType.GLOB) {
-            return
-        }
+	onMount(() => {
+		if (type == ProtectedPathType.GLOB) {
+			return
+		}
 
-        const suggester = new PathSuggester(app, inputEl).onSelect((v) => {
-            content = "/" + v
-            if (type == ProtectedPathType.PREFIX) {
-                content += '/'
-            }
-            suggester.close()
-        })
-        suggester.filesOnly = type == ProtectedPathType.EXACT
-    })
-
-    // $effect(() => {
-    //     if (disabled || activeElement != inputEl || type == ProtectedPathType.GLOB) {
-	// 		console.log("Closing...")
-	// 		suggester?.close()
-	// 		return
-	// 	}
-
-	// 	if (!suggester) {
-	// 		suggester = new PathSuggester(app, inputEl).onSelect((v) => {
-	// 			content = "/" + v
-	// 			if (type == ProtectedPathType.PREFIX) {
-	// 				content += '/'
-	// 			}
-	// 			suggester.close()
-	// 		})
-	// 		suggester.filesOnly = type == ProtectedPathType.EXACT
-	// 	}
-
-	// 	suggester.open()
-    // })
+		const suggester = new PathSuggester(app, inputEl).onSelect((v) => {
+			content = '/' + v
+			if (type == ProtectedPathType.PREFIX) {
+				content += '/'
+			}
+			suggester.close()
+		})
+		suggester.filesOnly = type == ProtectedPathType.EXACT
+	})
 </script>
 
-<input type="text" bind:this={inputEl} placeholder="Matcher" bind:value={content} {disabled} />
+<input
+	class="sp-path-input"
+	type="text"
+	bind:this={inputEl}
+	placeholder="Matcher"
+	bind:value={content}
+	{disabled}
+/>
 
-<svelte:document bind:activeElement={activeElement} />
+<svelte:document bind:activeElement />
+
+<style>
+	.sp-path-input {
+		flex-grow: 1;
+	}
+</style>

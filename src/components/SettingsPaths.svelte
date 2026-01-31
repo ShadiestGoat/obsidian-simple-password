@@ -91,5 +91,7 @@
 
 	.sp-path-container {
 		flex-grow: 1;
+		display: flex;
+		gap: var(--size-4-1);
 	}
 </style>
